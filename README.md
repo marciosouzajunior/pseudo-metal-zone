@@ -4,14 +4,6 @@ Pedal de distorção/fuzz pesado baseado em **RC4558/JRC4558**, desenvolvido em 
 
 A ideia é chegar em uma distorção agressiva para baixo/guitarra, inspirada de forma conceitual no Boss Metal Zone e em timbres de hard rock/nu metal, mas com um circuito simples, compreendido estágio por estágio, usando componentes THT e um único CI dual op-amp.
 
-## Status atual
-
-- A PCB V1 já foi enviada para fabricação.
-- O repo agora usa este `README.md` como fonte principal consolidada.
-- O arquivo `MEASUREMENTS.md` mantém as medições detalhadas.
-- `TODO.md`, `PROJECT_LOG.md`, `PCB_NOTES.md` e notas originais foram incorporados ou descartados para evitar duplicação.
-- A versão atual é experimental, não definitiva. A decisão sobre próximos ajustes será feita depois da chegada/teste da placa.
-
 ## Objetivo sonoro
 
 - Distorção pesada para baixo/guitarra.
@@ -82,7 +74,7 @@ VREF → C_VREF_FILTER 100uF → GND
 ### Desacoplamento do op-amp
 
 ```text
-pino 8 → C_OPAMP_DECOUPLING 100nF / 104 → pino 4
+pino 8 → C_OPAMP_DECOUPLING 100nF (104) → pino 4
 ```
 
 Deve ficar fisicamente o mais próximo possível do RC4558.
@@ -90,7 +82,7 @@ Deve ficar fisicamente o mais próximo possível do RC4558.
 ## Entrada
 
 ```text
-INPUT → C_INPUT_COUPLING 100nF / 104 → pino 3
+INPUT → C_INPUT_COUPLING 100nF (104) → pino 3
 pino 3 → R_INPUT_BIAS 1M → VREF
 ```
 
@@ -108,10 +100,15 @@ pino 1 → R_STAGE1_GAIN 100k → pino 2
 pino 2 → R_STAGE1_REF 4.7k → VREF
 ```
 
+Onde:
+
+- `R_STAGE1_GAIN` (100k): resistor de realimentação (feedback).
+- `R_STAGE1_REF` (4.7k): resistor de referência que define o ganho junto com R_STAGE1_GAIN.
+
 Ganho aproximado:
 
 ```text
-100k / 4.7k ≈ 22x
+R_STAGE1_GAIN / R_STAGE1_REF = 100k / 4.7k ≈ 22x
 ```
 
 Função:
@@ -130,7 +127,7 @@ pino 5 → R_STAGE2_BIAS 100k → VREF
 Valor escolhido:
 
 ```text
-C_INTERSTAGE = 10nF / 103
+C_INTERSTAGE = 10nF (103)
 ```
 
 Essa foi uma das mudanças mais importantes do projeto. O 103 cortou parte dos graves antes do segundo estágio, deixando o som mais definido e agressivo. O 104 ficou mais cheio/aberto, mas menos controlado. O 153 ficou no meio do caminho.
@@ -163,7 +160,7 @@ pino 7 → C_CLIP_IN → CLIP_NODE
 Valor atual:
 
 ```text
-C_CLIP_IN = 220nF / 224 / u22
+C_CLIP_IN = 220nF (224 ou u22)
 ```
 
 Função:
@@ -231,26 +228,73 @@ terminal 2 = saída
 
 `C_OUTPUT_COUPLING = 1uF` foi mantido na V1 para bloquear DC residual antes do jack de saída.
 
+## Indicação e proteção
+
+### LED de indicação de energia
+
+```text
++9V → R_LED 2.2k → LED_POWER → GND
+```
+
+Função:
+
+- Indicar que o pedal está ligado.
+- Proteger o LED com resistor limitador de corrente.
+
+Valor do resistor:
+
+- `R_LED = 2.2k` para LED típico de 5 mm com corrente limitada.
+- LED escolhido: 5 mm THT, cor livre (vermelho recomendado).
+
 ## Configuração atual da PCB V1
 
-| Bloco | Valor atual |
-|---|---|
-| CI | RC4558 / JRC4558 em soquete DIP8 |
-| Alimentação | 9 V DC |
-| VREF | 100k / 100k + 100uF |
-| Desacoplamento CI | 100nF / 104 |
-| Entrada | 100nF / 104 + 1M para VREF |
-| Estágio A | 100k / 4.7k |
-| Interstage | 10nF / 103 |
-| Bias estágio B | 100k para VREF |
-| Ganho estágio B | pot 100k |
-| Referência estágio B | 22k para VREF |
-| Limitador de ganho | 47k em paralelo com pot |
-| Pré-clipping | 220nF / 224 / u22 |
-| Clipping | 3x 1N4148 assimétricos |
-| Anti-fizz | 10k + 3n3 |
-| Volume | 100k |
-| Saída | 1uF coupling |
+| Bloco | Referência | Valor atual |
+|---|---|---|
+| **Fonte e referência** | | |
+| CI principal | U1 | RC4558/JRC4558 DIP-8 + soquete |
+| Alimentação | — | 9 V DC |
+| Filtro de alimentação | C_POWER_FILTER | 100uF eletrolítico |
+| VREF divisor | R_VREF_TOP / R_VREF_BOTTOM | 100k / 100k |
+| Filtro VREF | C_VREF_FILTER | 100uF eletrolítico |
+| Desacoplamento CI | C_OPAMP_DECOUPLING | 100nF (104) cerâmico |
+| **Entrada** | | |
+| Acoplamento entrada | C_INPUT_COUPLING | 100nF (104) filme P5mm |
+| Bias entrada | R_INPUT_BIAS | 1M |
+| **Estágio A** | | |
+| Realimentação | R_STAGE1_GAIN | 100k |
+| Referência | R_STAGE1_REF | 4.7k |
+| **Interstage** | | |
+| Filtro interstage | C_INTERSTAGE | 10nF (103) filme P5mm |
+| Bias estágio B | R_STAGE2_BIAS | 100k |
+| **Estágio B** | | |
+| Ganho | P_GAIN | 100k potenciômetro linear |
+| Limitador ganho | R_LIMIT_GAIN | 47k em paralelo com P_GAIN |
+| Referência | R_STAGE2_REF | 22k |
+| **Clipping** | | |
+| Pré-clipping | C_CLIP_IN | 220nF (224) filme P5mm |
+| Diodos clipping | D_CLIP_A, D_CLIP_B, D_CLIP_C | 3x 1N4148 assimétricos |
+| **Anti-fizz** | | |
+| Resistor anti-fizz | R_FIZZ | 10k |
+| Capacitor anti-fizz | C_FIZZ | 3.3nF (3n3) filme P5mm |
+| **Volume e saída** | | |
+| Volume master | P_VOLUME | 100k potenciômetro log |
+| Acoplamento saída | C_OUTPUT_COUPLING | 1uF eletrolítico |
+| **Indicação** | | |
+| LED indicador | LED_POWER | 5mm THT |
+| Resistor LED | R_LED | 2.2k |
+
+## Conectividade externa
+
+A PCB V1 usa **headers e fios** para conexão de componentes externos:
+
+- **DC_IN**: entrada de alimentação (9V DC) com chave.
+- **INPUT**: jack de entrada de áudio.
+- **OUTPUT**: jack de saída de áudio.
+- **P_GAIN**: potenciômetro de ganho do estágio B (100k linear).
+- **P_VOLUME**: potenciômetro de volume master (100k logarítmico).
+- **Pads opcionais**: diversos pads de teste e pontos de modificação (13 pads 1x01).
+
+Vide `docs/BOM.md` para detalhes de footprints e conexões.
 
 ## Principais descobertas
 
@@ -267,7 +311,7 @@ terminal 2 = saída
 
 ## Resumo das medições principais
 
-As medições completas estão em [`MEASUREMENTS.md`](MEASUREMENTS.md).
+As medições completas estão em [docs/MEASUREMENTS.md](docs/MEASUREMENTS.md).
 
 ### Filtro entre estágios
 
@@ -322,18 +366,8 @@ Sweet spot observado: **20% a 35%**.
 
 A PCB V1 foi pensada como placa experimental de face simples/THT, com alguns pontos de modificação.
 
-### Dados do pedido/fabricação
-
-- Projeto/Gerber: `PseudoMetalZone_V1_Y2`.
-- Material: FR-4.
 - Camadas: 1.
 - Dimensão aproximada: 62,65 mm × 61,8 mm.
-- Quantidade enviada/orçada: 5 placas no pedido observado; antes também foi considerado orçamento de 10.
-- Build time informado: 3 dias.
-
-### Lado da placa e montagem
-
-- Em placa face simples, o cobre fica de um lado e os componentes geralmente são soldados pelo outro.
 - O silk fica do lado dos componentes.
 - Jumpers podem cruzar trilhas, mas devem ser feitos com fio isolado quando passarem por cima de cobre/trilhas.
 - Jumpers no lado dos componentes não devem encostar em trilhas expostas.
@@ -373,25 +407,48 @@ Prioridades:
 
 ### Pontos úteis de modificação/teste
 
-- `C_INTERSTAGE`: 103, 153, 104.
-- `C_CLIP_IN`: 104, 224.
+- `C_INTERSTAGE`: 103 (10nF), 153 (15nF), 104 (100nF).
+- `C_CLIP_IN`: 104 (100nF), 224 (220nF).
 - `R_LIMIT_GAIN`: 22k, 33k, 47k, 68k.
-- `C_FIZZ`: sem capacitor, 2n2, 3n3, 4n7, 6n8.
+- `C_FIZZ`: sem capacitor, 2n2 (2.2nF), 3n3 (3.3nF), 4n7 (4.7nF), 6n8 (6.8nF).
 - Pads de teste para +9V, GND, VREF, saída do estágio A, entrada do estágio B, CLIP_NODE e OUTPUT.
 
 ## Arquivos do repo
 
 ```text
-README.md                         documentação principal consolidada
-MEASUREMENTS.md                   medições e testes detalhados
-BOM.md                            lista de componentes da V1
-hardware/PseudoMetalZone_V1_Schematic.pdf
+README.md                         documentação principal
+
+docs/
+  BOM.md                          lista de componentes da PCB V1
+  MEASUREMENTS.md                 medições e testes de desenvolvimento
+  PseudoMetalZone_V1_Schematic.pdf
                                   esquemático exportado em PDF
-hardware/                         pasta para esquemáticos, imagens e layout
-gerbers/                          pasta reservada para Gerbers finais, se desejar versionar
+  maloyk.png                      imagem de referência/inspiração
+
+hardware/
+  PseudoMetalZone_V1.kicad_sch    esquemático do KiCad
+  PseudoMetalZone_V1.kicad_pcb    layout da PCB
+  PseudoMetalZone_V1.kicad_pro    arquivo do projeto
+  PseudoMetalZone_V1.kicad_prl    preferências do projeto
+  ~PseudoMetalZone_V1.kicad_pro.lck
+                                  lock file (temporário)
+
+gerbers/
+  PseudoMetalZone_V1-F_Cu.gtl     cobre frente
+  PseudoMetalZone_V1-B_Cu.gbl     cobre verso
+  PseudoMetalZone_V1-F_Mask.gts   máscara de solda frente
+  PseudoMetalZone_V1-B_Mask.gbs   máscara de solda verso
+  PseudoMetalZone_V1-F_Silkscreen.gto
+                                  serigrafia frente
+  PseudoMetalZone_V1-B_Silkscreen.gbo
+                                  serigrafia verso
+  PseudoMetalZone_V1-Edge_Cuts.gm1
+                                  contorno da placa
+  PseudoMetalZone_V1.drl          furos (drill)
+  PseudoMetalZone_V1-job.gbrjob   configuração do job
 ```
 
-## Como continuar quando a placa chegar
+## Procedimentos para nova placa
 
 1. Conferir continuidade de +9V, GND e VREF antes de inserir o CI.
 2. Alimentar a placa sem o 4558 e medir:
@@ -405,7 +462,7 @@ gerbers/                          pasta reservada para Gerbers finais, se deseja
 7. Medir saída do estágio A, entrada do estágio B, CLIP_NODE e saída final.
 8. Testar com guitarra real e baixo real antes de decidir novas alterações.
 
-## Decisões deixadas para depois da PCB
+## Decisões a serem avaliadas depois
 
 - Se o 224 antes dos diodos será mantido definitivamente.
 - Se o anti-fizz 3n3 está no ponto ideal.

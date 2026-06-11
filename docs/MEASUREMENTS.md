@@ -2,6 +2,11 @@
 
 Medições coletadas durante o desenvolvimento do Pseudo Metal Zone em protoboard e na preparação da PCB V1.
 
+> **Leia primeiro**: [README.md](../README.md) para entender a arquitetura.  
+> **Referência de componentes**: [BOM.md](BOM.md) para valores exatos e footprints.
+
+---
+
 ## Ambiente geral de teste
 
 - CI principal: RC4558/JRC4558.

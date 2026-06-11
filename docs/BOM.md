@@ -2,8 +2,27 @@
 
 Arquivo consolidado para compra e conferência de componentes da PCB V1.
 
-> Objetivo: evitar compra de componente com footprint/tamanho errado.  
-> Placa: THT / through-hole, com potenciômetros, jacks e chave ligados por fios via headers.
+> **Objetivo**: evitar compra de componente com footprint/tamanho errado.  
+> **Placa**: THT (through-hole) com potenciômetros, jacks e chave ligados por headers/fios.  
+> **Referência completa**: ver [README.md](../README.md) para especificações e valores.
+
+---
+
+## Busca rápida por bloco funcional
+
+Para encontrar componentes de uma seção específica do circuito, consulte:
+
+| Bloco | Componentes | Seção do BOM |
+|---|---|---|
+| Alimentação e VREF | U1, C_POWER_FILTER, C_VREF_FILTER, R_VREF_TOP/BOTTOM, C_OPAMP_DECOUPLING | Resistores, Capacitores eletrolíticos |
+| Entrada | C_INPUT_COUPLING, R_INPUT_BIAS | Capacitores filme, Resistores |
+| Estágio A | R_STAGE1_GAIN, R_STAGE1_REF | Resistores |
+| Interstage | C_INTERSTAGE, R_STAGE2_BIAS | Capacitores filme, Resistores |
+| Estágio B (ganho) | P_GAIN, R_LIMIT_GAIN, R_STAGE2_REF | Potenciômetros, Resistores |
+| Clipping | C_CLIP_IN, D_CLIP_A/B/C | Capacitores filme, Diodos |
+| Anti-fizz | R_FIZZ, C_FIZZ | Resistores, Capacitores filme |
+| Volume e saída | P_VOLUME, C_OUTPUT_COUPLING | Potenciômetros, Capacitores eletrolíticos |
+| Indicação | LED_POWER, R_LED | LED, Resistores |
 
 ---
 
@@ -58,6 +77,8 @@ Comprar todos como **resistores axiais THT 1/4W**, preferencialmente metal film 
 ### Capacitores de filme / poliéster / box
 
 Comprar como **capacitor filme/poliéster box THT com passo 5 mm**. Tensão de 50V, 63V ou 100V é suficiente para pedal de 9V.
+
+**Nota sobre códigos comuns**: o código de três dígitos indica o valor em pF (exemplo: 104 = 100nF, 103 = 10nF). Este é o código impresso no capacitor.
 
 | Referência | Valor | Código comum | Qtde | Footprint | Comprar como | Observações |
 |---|---:|---|---:|---|---|---|
