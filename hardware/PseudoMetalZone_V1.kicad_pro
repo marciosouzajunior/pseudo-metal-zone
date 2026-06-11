@@ -700,7 +700,7 @@
         "uuid": "3b9e02ad-9f03-4f8e-b4a3-1239edab769c"
       }
     ],
-    "used_designators": "JMP1_A2,JMP1_B2,JMP_9V_A1,DC_IN1,JMP_9V_B1,INPUT1,JMP_INTER_A1-2,JMP_INTER_B1-2,OUTPUT1,J1,POWER_SW1,MOD_STAGE1,VREF1-2,STAGE1_OUT_PAD1-2,CLIP_NODE_PAD1-2,VREF_PAD3,9V_PAD1,OUTPUT_PAD1,D1,STAGE2_IN_PAD1,#PWR13-14,R1,C_POWER_FILTER2,LED_POWER1,R_LED1",
+    "used_designators": "",
     "variants": []
   },
   "sheets": [

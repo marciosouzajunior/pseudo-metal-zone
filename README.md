@@ -430,8 +430,6 @@ hardware/
   PseudoMetalZone_V1.kicad_pcb    layout da PCB
   PseudoMetalZone_V1.kicad_pro    arquivo do projeto
   PseudoMetalZone_V1.kicad_prl    preferências do projeto
-  ~PseudoMetalZone_V1.kicad_pro.lck
-                                  lock file (temporário)
 
 gerbers/
   PseudoMetalZone_V1-F_Cu.gtl     cobre frente
